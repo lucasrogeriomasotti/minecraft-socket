@@ -4,16 +4,6 @@ module Minecraft
   
   module Type
     
-    class Boolean
-      def self.encode(value)
-        return ((!!value) ? 0x01 : 0x00), 1
-      end
-      
-      def self.decode(value)
-        return ((value == 0x01) ? true : false), 1
-      end
-    end
-    
     class UnsignedShort
       def self.encode(value)
         return [value].pack("n"), 2

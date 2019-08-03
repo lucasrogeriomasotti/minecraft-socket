@@ -2,7 +2,6 @@ require 'socket'
 
 module Minecraft
   class Session
-    attr_reader :is_compression_activated
     
     def initialize(host, port, protocol_version)
       @host = host
@@ -55,29 +54,22 @@ module Minecraft
       end
     end
     
-    def handshake(next_state = :status)
+    def handshake()
       __connect()
       
-      next_state_table = {
-        status: 1,
-        login:  2,
-      }.freeze
-      
       m = Message.new
-      m.append(Type::VarInt, @protocol_version)            # Protocol Version
-      m.append(Type::String, @host)                        # Server Address
-      m.append(Type::UnsignedShort, @port)                 # Server Port
-      m.append(Type::VarInt, next_state_table[next_state]) # Next State
+      m.append(Type::VarInt, @protocol_version)
+      m.append(Type::String, @host)
+      m.append(Type::UnsignedShort, @port)
+      m.append(Type::VarInt, 1)
       
       self.send_packet(Packet.new(0x00, m))
     end
     
     def fetch_status
-      self.handshake(:status)
+      self.handshake()
       self.send_packet(Packet.new(0x00))
       self.get_packet
     end
-      
-    @is_compression_activated
   end
 end
